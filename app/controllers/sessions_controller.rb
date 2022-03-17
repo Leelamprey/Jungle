@@ -3,22 +3,18 @@ class SessionsController < ApplicationController
   end
 
   def create
-    user = User.find_by_email(params[:email])
-
-    # check user exist and password accurate
-    if user && user.authenticate(params[:password])
-
-      # Save userid cookie so they stay logged in
+    # If user is authenticated
+    if user = User.authenticate_with_credentials(params[:email], params[:password])
+      # Save userid cookie to not log out
       session[:user_id] = user.id
       redirect_to :root
-
     else 
       render :new
     end
-
   end
 
   def destroy
+    # delete cookie
     session[:user_id] = nil
     redirect_to :root
   end
